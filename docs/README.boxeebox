@@ -26,16 +26,15 @@ that turned out to be cumbersome for building OpenPHT, so I forked it and
 fixed it. I also updated it so it actually builds with more recent host tools.
 
 
-git clone --depth 1 https://github.com/Risca/boxeebox-xbmc.git
-cd boxeebox-xbmc
-./bootstrap
-automake --add-missing
-cd tools/boxeebox
-mkdir build
-cd build
-cmake -DTARGET_DIR=/opt/boxeebox-xbmc ..
-make
-#done
+        git clone --depth 1 https://github.com/Risca/boxeebox-xbmc.git
+        cd boxeebox-xbmc
+        ./bootstrap
+        automake --add-missing
+        cd tools/boxeebox
+        mkdir build
+        cd build
+        cmake -DTARGET_DIR=/opt/boxeebox-xbmc ..
+        make -j12
 
 This should have built xbmc/kodi for the BoxeeBox, and created a sysroot for us
 to use. It should be located in boxeebox-xbmc/tools/boxeebox/sysroot
@@ -46,40 +45,40 @@ to use. It should be located in boxeebox-xbmc/tools/boxeebox/sysroot
 
 I extracted these environment commands from the OpenPHT-Embedded project:
 
-export SYSROOT_PREFIX=<path to boxeebox-xbmc>/tools/boxeebox/sysroot
-export PYTHON_LDFLAGS=-L$(SYSROOT_PREFIX)/usr/lib/python2.7 -lpython2.7
-export PYTHON_CPPFLAGS=-I$(SYSROOT_PREFIX)/usr/include/python2.7
-export PYTHON_EXEC=$(SYSROOT_PREFIX)/usr/bin/python2.7
-export PKG_CONFIG_PATH=$(SYSROOT_PREFIX)/usr/lib/pkgconfig
-export PYTHON_VERSION=2.7
-export ac_python_version=2.7
+        export SYSROOT_PREFIX=<path to boxeebox-xbmc>/tools/boxeebox/sysroot
+        export PYTHON_LDFLAGS=-L$(SYSROOT_PREFIX)/usr/lib/python2.7 -lpython2.7
+        export PYTHON_CPPFLAGS=-I$(SYSROOT_PREFIX)/usr/include/python2.7
+        export PYTHON_EXEC=$(SYSROOT_PREFIX)/usr/bin/python2.7
+        export PKG_CONFIG_PATH=$(SYSROOT_PREFIX)/usr/lib/pkgconfig
+        export PYTHON_VERSION=2.7
+        export ac_python_version=2.7
 
 Checkout the sources and create build folder:
 
-git clone --depth 1 https://github.com/Risca/OpenPHT.git
-cd OpenPHT
-mkdir build
-cd build
+        git clone --depth 1 https://github.com/Risca/OpenPHT.git
+        cd OpenPHT
+        mkdir build
+        cd build
 
 Create a cmake toolchain file called _cmake-i686-pc-linux-gnu.conf_ with the
 following contents:
 
-SET(CMAKE_SYSTEM_NAME Linux)
-SET(CMAKE_SYSTEM_VERSION 1)
-SET(CMAKE_SYSTEM_PROCESSOR  i686)
-SET(CMAKE_C_COMPILER   ${SYSROOT_PREFIX}/usr/bin//i686-pc-linux-gnu-gcc)
-SET(CMAKE_CXX_COMPILER ${SYSROOT_PREFIX}/usr/bin//i686-pc-linux-gnu-g++)
-SET(CMAKE_CPP_COMPILER ${SYSROOT_PREFIX}/usr/bin//i686-pc-linux-gnu-cpp)
-SET(CMAKE_FIND_ROOT_PATH  ${SYSROOT_PREFIX})
-SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-SET(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+        SET(CMAKE_SYSTEM_NAME Linux)
+        SET(CMAKE_SYSTEM_VERSION 1)
+        SET(CMAKE_SYSTEM_PROCESSOR  i686)
+        SET(CMAKE_C_COMPILER   ${SYSROOT_PREFIX}/usr/bin//i686-pc-linux-gnu-gcc)
+        SET(CMAKE_CXX_COMPILER ${SYSROOT_PREFIX}/usr/bin//i686-pc-linux-gnu-g++)
+        SET(CMAKE_CPP_COMPILER ${SYSROOT_PREFIX}/usr/bin//i686-pc-linux-gnu-cpp)
+        SET(CMAKE_FIND_ROOT_PATH  ${SYSROOT_PREFIX})
+        SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+        SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+        SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+        SET(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 Configure and build:
 
-cmake -DCMAKE_TOOLCHAIN_FILE=cmake-i686-pc-linux-gnu.conf -DENABLE_PYTHON=ON -DEXTERNAL_PYTHON_HOME="${SYSROOT_PREFIX}/usr" -DPYTHON_EXEC="${PYTHON_EXEC}" -DCMAKE_PREFIX_PATH="${SYSROOT_PREFIX}" -DCMAKE_LIBRARY_PATH="${SYSROOT_PREFIX}/usr/lib" -DCMAKE_INCLUDE_PATH="${SYSROOT_PREFIX}/usr/include;${SYSROOT_PREFIX}/usr/include/python2.7" -DCOMPRESS_TEXTURES=OFF -DENABLE_DUMP_SYMBOLS=ON -DTARGET_PLATFORM=BOXEEBOX -DUSE_INTERNAL_FFMPEG=OFF -DOPENELEC=ON -DLIRC_DEVICE=/run/lirc/lircd -DCMAKE_INSTALL_PREFIX=/usr/lib/plexht -DCMAKE_BUILD_TYPE=Release -DENABLE_CEC=OFF ..
-make -j12
+        cmake -DCMAKE_TOOLCHAIN_FILE=cmake-i686-pc-linux-gnu.conf -DENABLE_PYTHON=ON -DEXTERNAL_PYTHON_HOME="${SYSROOT_PREFIX}/usr" -DPYTHON_EXEC="${PYTHON_EXEC}" -DCMAKE_PREFIX_PATH="${SYSROOT_PREFIX}" -DCMAKE_LIBRARY_PATH="${SYSROOT_PREFIX}/usr/lib" -DCMAKE_INCLUDE_PATH="${SYSROOT_PREFIX}/usr/include;${SYSROOT_PREFIX}/usr/include/python2.7" -DCOMPRESS_TEXTURES=OFF -DENABLE_DUMP_SYMBOLS=ON -DTARGET_PLATFORM=BOXEEBOX -DUSE_INTERNAL_FFMPEG=OFF -DOPENELEC=ON -DLIRC_DEVICE=/run/lirc/lircd -DCMAKE_INSTALL_PREFIX=/usr/lib/plexht -DCMAKE_BUILD_TYPE=Release -DENABLE_CEC=OFF ..
+        make -j12
 
 -----------------------------------------------------------------------------
 4. Post-build fixes and copying to removable media
@@ -87,39 +86,27 @@ make -j12
 
 The easiest way to collect as many files as plex needs in one command is
 
-DESTDIR=/tmp/plex-dist make install
+        DESTDIR=/tmp/plex-dist make install
 
 This will install a bunch of resources used by OpenPHT, as well as some
 libraries and the main executable, into _/tmp/plex-dist_. Now, we have to swap
 some files around. Decide on a removable media (USB stick, SD card, NFS share)
 that you want to use and format it. Let's assume it's mounted at /mnt/boxeebox
 
-rm -rf /tmp/plex-dist/usr/lib/plexht/bin/*.so
-cp -r /tmp/plex-dist/usr/lib/plexht/bin/* /mnt/boxeebox/
-cp -r /tmp/plex-dist/usr/lib/plexht/share/XBMC/* /mnt/boxeebox/
-mv -v /mnt/boxeebox/addons/skin.plex/{Colors,colors}
-mv -v /mnt/boxeebox/addons/skin.plex/{Sounds,sounds}
-mv -v /mnt/boxeebox/addons/skin.plex/{Media,media}
-TexturePacker -input /mnt/boxeebox/addons/skin.plex/media/ -output Textures.xbt -dupecheck -use_none
-rm -rf /mnt/boxeebox/addons/skin.plex/media
-mkdir /mnt/boxeebox/addons/skin.plex/media
-mv Textures.xbt /mnt/boxeebox/addons/skin.plex/media/
-mkdir /mnt/boxeebox/config
-cp ../tools/BoxeeBox-settings/guisettings.xml /mnt/boxeebox/config/
-cp ../tools/BoxeeBox-settings/sources.xml /mnt/boxeebox/config/
-cp ../tools/BoxeeBox-settings/advancedsettings.xml /mnt/boxeebox/system/
-
-Create a start script - /mnt/boxeebox/start_plexht.sh:
-#!/bin/sh
-/etc/rc3.d/U99boxee stop #kill boxee service
-killall run_boxee.sh #kill boxee runtime
-killall Boxee #kill boxee process
-/etc/rc3.d/U94boxeehal stop #kill boxee hal service
-killall BoxeeHal #kill boxee hal process
-while true; do
-	HOME=/data XBMC_USER_HOME=/data/.plexht XBMC_TEMP=/data/.plexht/temp XBMC_HOME=$(pwd) LD_LIBRARY_PATH=$(pwd) ./plexhometheater --standalone -fs 2>>/tmp/plexht.log
-done
-EOF
+        rm -rf /tmp/plex-dist/usr/lib/plexht/bin/*.so
+        cp -r /tmp/plex-dist/usr/lib/plexht/bin/* /mnt/boxeebox/
+        cp -r /tmp/plex-dist/usr/lib/plexht/share/XBMC/* /mnt/boxeebox/
+        mv -v /mnt/boxeebox/addons/skin.plex/{Colors,colors}
+        mv -v /mnt/boxeebox/addons/skin.plex/{Sounds,sounds}
+        mv -v /mnt/boxeebox/addons/skin.plex/{Media,media}
+        TexturePacker -input /mnt/boxeebox/addons/skin.plex/media/ -output Textures.xbt -dupecheck -use_none
+        rm -rf /mnt/boxeebox/addons/skin.plex/media
+        mkdir /mnt/boxeebox/addons/skin.plex/media
+        mv Textures.xbt /mnt/boxeebox/addons/skin.plex/media/
+        mkdir /mnt/boxeebox/config
+        cp ../tools/BoxeeBox-settings/guisettings.xml /mnt/boxeebox/config/
+        cp ../tools/BoxeeBox-settings/sources.xml /mnt/boxeebox/config/
+        cp ../tools/BoxeeBox-settings/advancedsettings.xml /mnt/boxeebox/system/
 
 You will also need all the libraries that plex uses. I haven't figured out a
 good way to automatically find this out, so I just tried to run the binary
@@ -129,23 +116,12 @@ repeatedly, and copy the missing .so file, until it finally started.
 5. Setting up your BoxeeBox
 -----------------------------------------------------------------------------
 
-Connect your removable media and boot your BoxeeBox. Once BoxeeHack has booted,
-you can run plex by logging in with ssh or telnet and execute:
+An updated version of BoxeeHack is needed; one that knows how to start up
+OpenPHT. There's a fork available here:
 
-cd /mnt/<media name>
-sh start_plexht.sh
+        https://github.com/Risca/boxeehack
 
-To autostart OpenPHT, create this file:
-
-$ cat /data/hack/init.d/91checkplexhometheater.sh 
-#!/bin/sh
-# Check if we have plexht installed on an external drive
-for m in /tmp/mnt/*; do
-	if [ -f ${m}/start_plexht.sh ]; then
-		cd ${m}
-		./start_plexht.sh &
-		exit
-	fi
-done
+Connect your removable media and boot your BoxeeBox. OpenPHT should boot up
+automatically.
 
 All done!
