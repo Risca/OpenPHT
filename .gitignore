@@ -1263,3 +1263,5 @@ project/BuildDependencies/bin/dump_syms.exe
 .idea
 
 *.autosave
+
+tags
