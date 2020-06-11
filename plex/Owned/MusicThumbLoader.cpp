@@ -186,10 +186,12 @@ bool CMusicThumbLoader::FillLibraryArt(CFileItem &item)
 
 bool CMusicThumbLoader::GetEmbeddedThumb(const std::string &path, EmbeddedArt &art)
 {
-  unique_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(path));
-  CMusicInfoTag tag;
-  if (NULL != pLoader.get())
+  IMusicInfoTagLoader *pLoader = CMusicInfoTagLoaderFactory::CreateLoader(path);
+  if (NULL != pLoader) {
+    CMusicInfoTag tag;
     pLoader->Load(path, tag, &art);
+    delete pLoader;
+  }
 
   return !art.empty();
 }

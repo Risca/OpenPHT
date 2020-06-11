@@ -58,9 +58,18 @@
 extern HWND g_hWnd;
 #endif
 
+#include <boost/function.hpp>
+#include <boost/scoped_ptr.hpp>
+
 using namespace ANNOUNCEMENT;
 
 CPowerManager g_powerManager;
+
+template<class T>
+IPowerSyscall* PowerSyscallFactory()
+{
+  return new T;
+}
 
 CPowerManager::CPowerManager()
 {
@@ -82,40 +91,43 @@ void CPowerManager::Initialize()
   m_instance = new CAndroidPowerSyscall();
 #elif defined(TARGET_POSIX)
 #if defined(HAS_DBUS)
-  std::unique_ptr<IPowerSyscall> bestPowerManager;
-  std::unique_ptr<IPowerSyscall> currPowerManager;
+  IPowerSyscall *bestPowerManager;
   int bestCount = -1;
   int currCount = -1;
   
-  std::list< std::pair< std::function<bool()>,
-                        std::function<IPowerSyscall*()> > > powerManagers =
+  typedef std::list< std::pair< boost::function<bool()>, boost::function<IPowerSyscall*()> > > PowerList;
+  PowerList powerManagers;
+  powerManagers.push_back(std::make_pair(
+    CConsoleUPowerSyscall::HasConsoleKitAndUPower, PowerSyscallFactory<CConsoleUPowerSyscall>));
+  powerManagers.push_back(std::make_pair(
+    CConsoleDeviceKitPowerSyscall::HasDeviceConsoleKit, PowerSyscallFactory<CConsoleDeviceKitPowerSyscall>));
+  powerManagers.push_back(std::make_pair(
+    CLogindUPowerSyscall::HasLogind, PowerSyscallFactory<CLogindUPowerSyscall>));
+  powerManagers.push_back(std::make_pair(
+    CUPowerSyscall::HasUPower, PowerSyscallFactory<CUPowerSyscall>));
+
+  for (PowerList::const_iterator powerManager = powerManagers.begin();
+       powerManager != powerManagers.end(); powerManager++)
   {
-    std::make_pair(CConsoleUPowerSyscall::HasConsoleKitAndUPower,
-                   [] { return new CConsoleUPowerSyscall(); }),
-    std::make_pair(CConsoleDeviceKitPowerSyscall::HasDeviceConsoleKit,
-                   [] { return new CConsoleDeviceKitPowerSyscall(); }),
-    std::make_pair(CLogindUPowerSyscall::HasLogind,
-                   [] { return new CLogindUPowerSyscall(); }),
-    std::make_pair(CUPowerSyscall::HasUPower,
-                   [] { return new CUPowerSyscall(); })
-  };
-  for(const auto& powerManager : powerManagers)
-  {
-    if (powerManager.first())
+    if (powerManager->first())
     {
-      currPowerManager.reset(powerManager.second());
+      IPowerSyscall *currPowerManager = powerManager->second();
       currCount = currPowerManager->CountPowerFeatures();
       if (currCount > bestCount)
       {
         bestCount = currCount;
-        bestPowerManager = std::move(currPowerManager);
+        if (bestPowerManager) delete bestPowerManager;
+        bestPowerManager = currPowerManager;
+      }
+      else {
+        delete currPowerManager;
       }
       if (bestCount == IPowerSyscall::MAX_COUNT_POWER_FEATURES)
         break;
     }
   }
   if (bestPowerManager)
-    m_instance = bestPowerManager.release();
+    m_instance = bestPowerManager;
   else
 #endif // HAS_DBUS
     m_instance = new CFallbackPowerSyscall();

@@ -35,6 +35,8 @@
 #include "filesystem/SpecialProtocol.h"
 #endif
 
+#include <boost/scoped_ptr.hpp>
+
 using namespace MUSIC_INFO;
 using namespace ADDON;
 
@@ -262,13 +264,13 @@ void CVisualisation::OnAudioData(const float* pAudioData, int iAudioDataLength)
     return;
 
   // Save our audio data in the buffers
-  std::unique_ptr<CAudioBuffer> pBuffer ( new CAudioBuffer(iAudioDataLength) );
+  CAudioBuffer *pBuffer = new CAudioBuffer(iAudioDataLength);
   pBuffer->Set(pAudioData, iAudioDataLength);
-  m_vecBuffers.push_back( pBuffer.release() );
+  m_vecBuffers.push_back(pBuffer);
 
   if ( (int)m_vecBuffers.size() < m_iNumBuffers) return ;
 
-  std::unique_ptr<CAudioBuffer> ptrAudioBuffer ( m_vecBuffers.front() );
+  boost::scoped_ptr<CAudioBuffer> ptrAudioBuffer ( m_vecBuffers.front() );
   m_vecBuffers.pop_front();
   // Fourier transform the data if the vis wants it...
   if (m_bWantsFreq)
@@ -287,7 +289,6 @@ void CVisualisation::OnAudioData(const float* pAudioData, int iAudioDataLength)
   { // Transfer data to our visualisation
     AudioData(ptrAudioBuffer->Get(), iAudioDataLength, NULL, 0);
   }
-  return ;
 }
 
 void CVisualisation::CreateBuffers()

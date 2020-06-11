@@ -763,7 +763,7 @@ public:
    \return the value of the evaluated expression.
    \sa Register
    */
-  bool EvaluateBool(const CStdString &expression, int context = 0, const CGUIListItemPtr &item = nullptr);
+  bool EvaluateBool(const CStdString &expression, int context = 0, const CGUIListItemPtr &item = CGUIListItemPtr());
 
   int TranslateString(const CStdString &strCondition);
 

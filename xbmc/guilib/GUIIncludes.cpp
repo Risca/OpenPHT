@@ -28,6 +28,8 @@
 #include "utils/StringUtils.h"
 #include "interfaces/info/SkinVariable.h"
 
+#include <utility>
+
 using namespace std;
 
 CGUIIncludes::CGUIIncludes()
@@ -151,7 +153,7 @@ bool CGUIIncludes::LoadIncludesFromXML(const TiXmlElement *root)
       if (haveParamTags && !definitionTag)
         CLog::Log(LOGWARNING, "Skin has invalid include definition: %s", tagName.c_str());
       else
-        m_includes.insert({ tagName, { *includeBody, std::move(defaultParams) } });
+        m_includes.insert(std::make_pair(tagName, std::make_pair(*includeBody, defaultParams)));
     }
     else if (node->Attribute("file"))
     { 
@@ -327,7 +329,7 @@ void CGUIIncludes::ResolveIncludesForNode(TiXmlElement *node, std::map<INFO::Inf
       }
     }
 
-    std::map<std::string, std::pair<TiXmlElement, Params>>::const_iterator it = m_includes.find(tagName);
+    std::map<std::string, std::pair<TiXmlElement, Params> >::const_iterator it = m_includes.find(tagName);
     if (it != m_includes.end())
     { // found the tag(s) to include - let's replace it
       const TiXmlElement *includeBody = &it->second.first;
@@ -406,7 +408,7 @@ bool CGUIIncludes::GetParameters(const TiXmlElement *include, const char *valueA
              paramValue = child->ValueStr();                           // and then tag value
          }
 
-         params.insert({ paramName, paramValue });                     // no overwrites
+         params.insert(std::make_pair(paramName, paramValue));         // no overwrites
        }
        param = param->NextSiblingElement("param");
      }
@@ -496,7 +498,7 @@ bool CGUIIncludes::GetParameters(const TiXmlElement *include, const char *valueA
  CGUIIncludes::ResolveParamsResult CGUIIncludes::ResolveParameters(const CStdString& strInput, CStdString& strOutput, const Params& params)
  {
    ParamReplacer paramReplacer(params);
-   if (CGUIInfoLabel::ReplaceSpecialKeywordReferences(strInput, "PARAM", std::ref(paramReplacer), strOutput))
+   if (CGUIInfoLabel::ReplaceSpecialKeywordReferences(strInput, "PARAM", paramReplacer, strOutput))
      // detect special input values of the form "$PARAM[undefinedParam]" (with no extra characters around)
      return paramReplacer.GetNumUndefinedParams() == 1 && paramReplacer.GetNumTotalParams() == 1 && strOutput.empty() ? SINGLE_UNDEFINED_PARAM_RESOLVED : PARAMS_RESOLVED;
    return NO_PARAMS_FOUND;
@@ -517,16 +519,30 @@ CStdString CGUIIncludes::ResolveConstant(const CStdString &constant) const
   return value;
 }
 
+namespace {
+
+struct FindInStringMap
+{
+  FindInStringMap(const std::map<std::string, std::string>& map) : m_map(map) {}
+
+  std::string operator()(const CStdString &str)
+  {
+    std::map<std::string, std::string>::const_iterator it = m_map.find(str);
+    if (it != m_map.end())
+      return it->second;
+    return "";
+  }
+
+private:
+  const std::map<std::string, std::string>& m_map;
+};
+
+}
+
 CStdString CGUIIncludes::ResolveExpressions(const CStdString &expression) const
 {
   CStdString work(expression);
-  CGUIInfoLabel::ReplaceSpecialKeywordReferences(work, "EXP", [&](const CStdString &str) -> CStdString {
-    std::map<std::string, std::string>::const_iterator it = m_expressions.find(str);
-    if (it != m_expressions.end())
-      return it->second;
-    return "";
-  });
-
+  CGUIInfoLabel::ReplaceSpecialKeywordReferences(work, "EXP", FindInStringMap(m_expressions));
   return work;
 }
 

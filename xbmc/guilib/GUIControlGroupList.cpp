@@ -25,6 +25,8 @@
 #include "utils/StringUtils.h"
 #include "GUIFont.h" // for XBFONT_* definitions
 
+#include <boost/foreach.hpp>
+
 CGUIControlGroupList::CGUIControlGroupList(int parentID, int controlID, float posX, float posY, float width, float height, float itemGap, int pageControl, ORIENTATION orientation, bool useControlPositions, uint32_t alignment, const CScroller& scroller)
 : CGUIControlGroup(parentID, controlID, posX, posY, width, height)
 , m_scroller(scroller)
@@ -450,17 +452,24 @@ std::string CGUIControlGroupList::GetLabel(int info) const
   return "";
 }
 
+namespace {
+
+bool IsVisibleAndCanFocus(const CGUIControl *c)
+{
+  return c->IsVisible() && c->CanFocus();
+}
+
+} // anonymouse namespace
+
 int CGUIControlGroupList::GetNumItems() const
 {
-  return std::count_if(m_children.begin(), m_children.end(), [&](const CGUIControl *child) {
-    return (child->IsVisible() && child->CanFocus());
-  });
+  return std::count_if(m_children.begin(), m_children.end(), IsVisibleAndCanFocus);
 }
 
 int CGUIControlGroupList::GetSelectedItem() const
 {
   int index = 1;
-  for (const auto& child : m_children)
+  BOOST_FOREACH(const CGUIControl* const& child, m_children)
   {
     if (child->IsVisible() && child->CanFocus())
     {
@@ -509,7 +518,7 @@ void CGUIControlGroupList::CalculateItemGap()
   {
     int itemsCount = 0;
     float itemsSize = 0;
-    for (const auto& child : m_children)
+    BOOST_FOREACH(const CGUIControl* const& child, m_children)
     {
       if (child->IsVisible())
       {

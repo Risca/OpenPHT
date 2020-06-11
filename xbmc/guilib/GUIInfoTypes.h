@@ -31,8 +31,9 @@
 #include "utils/StdString.h"
 #include <vector>
 #include <stdint.h>
-#include <functional>
 #include "interfaces/info/InfoBool.h"
+
+#include <boost/function.hpp>
 
 class CGUIListItem;
 
@@ -127,7 +128,7 @@ public:
    */
   static CStdString ReplaceAddonStrings(const CStdString &label);
 
-  typedef std::function<std::string(const std::string&)> StringReplacerFunc;
+  typedef boost::function<std::string(const std::string&)> StringReplacerFunc;
 
   /*!
    \brief Replaces instances of $strKeyword[value] with the appropriate resolved string

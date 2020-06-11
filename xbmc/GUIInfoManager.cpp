@@ -58,6 +58,7 @@
 #include "URL.h"
 #include "addons/Skin.h"
 #include "boost/make_shared.hpp"
+#include <boost/lexical_cast.hpp>
 #include "cores/DataCacheCore.h"
 
 // stuff for current song
@@ -3433,7 +3434,7 @@ CStdString CGUIInfoManager::GetMultiInfoLabel(const GUIInfo &info, int contextWi
           data1 = ((CGUIMediaWindow*)(window))->GetViewContainerID();
         else
         {
-          auto control = window->GetFocusedControl();
+          CGUIControl *control = window->GetFocusedControl();
           if (control && control->IsContainer())
             data1 = control->GetID();
         }
@@ -6529,7 +6530,7 @@ CStdString CGUIInfoManager::GetVideoLabel(int item, const CFileItemPtr& file)
         {
           CFileItemPtr mediaPart = g_application.CurrentFileItem().m_selectedMediaPart;
           if (mediaPart && mediaPart->HasProperty("indexesUrl"))
-            return mediaPart->GetProperty("indexesUrl").asString() + std::to_string((static_cast<int64_t>(std::round(g_application.GetTime())) + CSeekHandler::GetInstance().GetSeekSize() + 5) * 1000);
+            return mediaPart->GetProperty("indexesUrl").asString() + boost::lexical_cast<std::string>((static_cast<int64_t>(g_application.GetTime() + 0.5) + CSeekHandler::GetInstance().GetSeekSize() + 5) * 1000);
         }
         return "";
       }

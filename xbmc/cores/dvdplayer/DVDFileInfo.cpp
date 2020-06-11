@@ -52,27 +52,17 @@
 #include "cores/FFmpeg.h"
 #include "TextureCache.h"
 
+#include <boost/scoped_ptr.hpp>
+
 bool CDVDFileInfo::GetFileDuration(const CStdString &path, int& duration)
 {
-  std::unique_ptr<CDVDInputStream> input;
-  std::unique_ptr<CDVDDemux> demux;
-
-  input.reset(CDVDFactoryInputStream::CreateInputStream(NULL, path, ""));
-  if (!input.get())
-    return false;
-
-  if (!input->Open(path, ""))
-    return false;
-
-  demux.reset(CDVDFactoryDemuxer::CreateDemuxer(input.get(), true));
-  if (!demux.get())
-    return false;
-
-  duration = demux->GetStreamLength();
-  if (duration > 0)
-    return true;
-  else
-    return false;
+  boost::scoped_ptr<CDVDInputStream> input(CDVDFactoryInputStream::CreateInputStream(NULL, path, ""));
+  if (input && input->Open(path, "")) {
+    boost::scoped_ptr<CDVDDemux> demux(CDVDFactoryDemuxer::CreateDemuxer(input.get(), true));
+    if (demux)
+      return (duration = demux->GetStreamLength()) > 0;
+  }
+  return false;
 }
 
 int DegreeToOrientation(int degrees)

@@ -618,16 +618,18 @@ void CGUIWindowFileManager::OnStart(CFileItem *pItem)
   if (pItem->IsPlayList())
   {
     CStdString strPlayList = pItem->GetPath();
-    unique_ptr<CPlayList> pPlayList(CPlayListFactory::Create(strPlayList));
-    if (NULL != pPlayList.get())
+    CPlayList *pPlayList = CPlayListFactory::Create(strPlayList);
+    if (NULL != pPlayList)
     {
       if (!pPlayList->Load(strPlayList))
       {
         CGUIDialogOK::ShowAndGetInput(6, 0, 477, 0);
-        return;
       }
+      else {
+        g_application.ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST_MUSIC);
+      }
+      delete pPlayList;
     }
-    g_application.ProcessAndStartPlaylist(strPlayList, *pPlayList, PLAYLIST_MUSIC);
     return;
   }
   if (pItem->IsAudio() || pItem->IsVideo())

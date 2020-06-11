@@ -28,7 +28,7 @@
 RFFT::RFFT(int size, bool windowed) :
   m_size(size), m_windowed(windowed)
 {
-  m_cfg = kiss_fftr_alloc(m_size,0,nullptr,nullptr);
+  m_cfg = kiss_fftr_alloc(m_size,0,NULL,NULL);
 }
 
 RFFT::~RFFT()
@@ -38,6 +38,11 @@ RFFT::~RFFT()
   // to SIMD (which might be used during kiss_fftr_alloc
   //in the C'tor).
   KISS_FFT_FREE(m_cfg);
+}
+
+float RFFT::filter(kiss_fft_cpx& data) const
+{
+  return sqrt(data.r*data.r+data.i*data.i) * 2.0/m_size * (m_windowed?sqrt(8.0/3.0):1.0);
 }
 
 void RFFT::calc(const float* input, float* output)
@@ -61,11 +66,6 @@ void RFFT::calc(const float* input, float* output)
   // transform channels
   kiss_fftr(m_cfg, &linput[0], &loutput[0]);
   kiss_fftr(m_cfg, &rinput[0], &routput[0]);
-
-  auto&& filter = [&](kiss_fft_cpx& data)
-  {
-    return sqrt(data.r*data.r+data.i*data.i) * 2.0/m_size * (m_windowed?sqrt(8.0/3.0):1.0);
-  };
 
   // interleave while taking magnitudes and normalizing
   for (size_t i=0;i<m_size/2;++i)

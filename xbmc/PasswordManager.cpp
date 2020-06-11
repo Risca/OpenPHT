@@ -128,7 +128,7 @@ void CPasswordManager::Load()
       return;
     }
     const TiXmlElement *root = doc.RootElement();
-    if (root->ValueStr() != "passwords")
+    if (std::string(root->Value()) != "passwords")
       return;
     // read in our passwords
     const TiXmlElement *path = root->FirstChildElement("path");

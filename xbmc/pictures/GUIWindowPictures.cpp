@@ -43,6 +43,8 @@
 #include "Autorun.h"
 #include "interfaces/AnnouncementManager.h"
 
+#include <boost/scoped_ptr.hpp>
+
 #define CONTROL_BTNVIEWASICONS      2
 #define CONTROL_BTNSORTBY           3
 #define CONTROL_BTNSORTASC          4
@@ -568,7 +570,7 @@ void CGUIWindowPictures::OnItemLoaded(CFileItem *pItem)
 void CGUIWindowPictures::LoadPlayList(const CStdString& strPlayList)
 {
   CLog::Log(LOGDEBUG,"CGUIWindowPictures::LoadPlayList()... converting playlist into slideshow: %s", strPlayList.c_str());
-  unique_ptr<CPlayList> pPlayList(CPlayListFactory::Create(strPlayList));
+  boost::scoped_ptr<CPlayList> pPlayList(CPlayListFactory::Create(strPlayList));
   if ( NULL != pPlayList.get())
   {
     if (!pPlayList->Load(strPlayList))

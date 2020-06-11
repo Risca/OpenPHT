@@ -25,6 +25,7 @@
 #include "utils/rfft.h"
 
 #include <algorithm>
+#include <boost/scoped_ptr.hpp>
 #include <map>
 #include <list>
 #include <memory>
@@ -104,7 +105,7 @@ namespace ADDON
     bool m_bWantsFreq;
     float m_fFreq[AUDIO_BUFFER_SIZE];         // Frequency data
     bool m_bCalculate_Freq;       // True if the vis wants freq data
-    std::unique_ptr<RFFT> m_transform;
+    boost::scoped_ptr<RFFT> m_transform;
 
     // track information
     CStdString m_AlbumThumb;

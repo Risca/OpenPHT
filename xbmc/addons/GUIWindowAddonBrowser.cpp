@@ -47,6 +47,8 @@
 #include "settings/GUISettings.h"
 #include "LangInfo.h"
 
+#include <boost/foreach.hpp>
+
 #define CONTROL_AUTOUPDATE    5
 #define CONTROL_SHUTUP        6
 #define CONTROL_FOREIGNFILTER 7
@@ -398,8 +400,13 @@ int CGUIWindowAddonBrowser::SelectAddonID(const vector<ADDON::TYPE> &types, CStd
     return 0;
 
   // get rid of any invalid addon types
-  std::vector<ADDON::TYPE> validTypes(types.size());
-  std::copy_if(types.begin(), types.end(), validTypes.begin(), [](ADDON::TYPE type) { return type != ADDON_UNKNOWN; });
+  std::vector<ADDON::TYPE> validTypes;
+  validTypes.reserve(types.size());
+
+  BOOST_FOREACH(const ADDON::TYPE& type, types) {
+    if (type != ADDON_UNKNOWN)
+      validTypes.push_back(type);
+  }
 
   if (validTypes.empty())
     return 0;

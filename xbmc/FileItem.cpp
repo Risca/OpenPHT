@@ -64,6 +64,7 @@
 #include "filesystem/DirectoryCache.h"
 #include "FileSystem/PlexFile.h"
 #include <boost/foreach.hpp>
+#include <boost/scoped_ptr.hpp>
 #include "Client/PlexServerManager.h"
 #include "Client/PlexConnection.h"
 /* END PLEX */
@@ -2318,7 +2319,7 @@ void CFileItemList::FilterCueItems()
               itemstodelete.push_back(strMediaFile);
               // get the additional stuff (year, genre etc.) from the underlying media files tag.
               CMusicInfoTag tag;
-              unique_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(strMediaFile));
+              boost::scoped_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(strMediaFile));
               if (NULL != pLoader.get())
               {
                 // get id3tag
@@ -3180,7 +3181,7 @@ bool CFileItem::LoadMusicTag()
   // load tag from file
   CLog::Log(LOGDEBUG, "%s: loading tag information for file: %s", __FUNCTION__, m_strPath.c_str());
   CMusicInfoTagLoaderFactory factory;
-  unique_ptr<IMusicInfoTagLoader> pLoader(factory.CreateLoader(m_strPath));
+  boost::scoped_ptr<IMusicInfoTagLoader> pLoader(factory.CreateLoader(m_strPath));
   if (NULL != pLoader.get())
   {
     if (pLoader->Load(m_strPath, *GetMusicInfoTag()))

@@ -33,6 +33,8 @@
 #include "pvr/PVRManager.h"
 #include "pvr/addons/PVRClients.h"
 
+#include <boost/scoped_ptr.hpp>
+
 using namespace PVR;
 
 CDVDDemux* CDVDFactoryDemuxer::CreateDemuxer(CDVDInputStream* pInputStream, bool fileinfo)
@@ -45,11 +47,16 @@ CDVDDemux* CDVDFactoryDemuxer::CreateDemuxer(CDVDInputStream* pInputStream, bool
   {
     // audio/x-xbmc-pcm this is the used codec for AirTunes
     // (apples audio only streaming)
-    std::unique_ptr<CDVDDemuxBXA> demuxer(new CDVDDemuxBXA());
-    if(demuxer->Open(pInputStream))
-      return demuxer.release();
-    else
+    CDVDDemuxBXA *demuxer = new CDVDDemuxBXA();
+    if (!demuxer)
       return NULL;
+
+    if(demuxer->Open(pInputStream))
+      return demuxer;
+    else {
+      delete demuxer;
+      return NULL;
+    }
   }
   
   // Try to open CDDA demuxer
@@ -60,10 +67,15 @@ CDVDDemux* CDVDFactoryDemuxer::CreateDemuxer(CDVDInputStream* pInputStream, bool
     {
       CLog::Log(LOGDEBUG, "DVDFactoryDemuxer: Stream is probably CD audio. Creating CDDA demuxer.");
 
-      std::unique_ptr<CDVDDemuxCDDA> demuxer(new CDVDDemuxCDDA());
+      CDVDDemuxCDDA *demuxer = new CDVDDemuxCDDA();
+      if (!demuxer)
+        return NULL;
+
       if (demuxer->Open(pInputStream))
-      {
-        return demuxer.release();
+        return demuxer;
+      else {
+        delete demuxer;
+        return NULL;
       }
     }
   }
@@ -96,10 +108,15 @@ CDVDDemux* CDVDFactoryDemuxer::CreateDemuxer(CDVDInputStream* pInputStream, bool
   }
 #endif
 
-  std::unique_ptr<CDVDDemuxFFmpeg> demuxer(new CDVDDemuxFFmpeg());
-  if(demuxer->Open(pInputStream, streaminfo, fileinfo))
-    return demuxer.release();
-  else
+  CDVDDemuxFFmpeg *demuxer = new CDVDDemuxFFmpeg();
+  if (!demuxer)
     return NULL;
+
+  if(demuxer->Open(pInputStream, streaminfo, fileinfo))
+    return demuxer;
+  else {
+    delete demuxer;
+    return NULL;
+  }
 }
 

@@ -30,6 +30,8 @@
 #include "XBDateTime.h"
 #include "URL.h"
 
+#include <stdexcept>
+
 #ifdef _WIN32
 #pragma comment(lib, "libmicrohttpd-dll.lib")
 #endif

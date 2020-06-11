@@ -34,6 +34,9 @@
 #include "threads/SingleLock.h"
 #include "utils/URIUtils.h"
 
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+
 using namespace std;
 using namespace XFILE;
 
@@ -237,8 +240,8 @@ bool CDirectory::Create(const CStdString& strPath)
   try
   {
     CStdString realPath = URIUtils::SubstitutePath(strPath);
-    unique_ptr<IDirectory> pDirectory(CDirectoryFactory::Create(realPath));
-    if (pDirectory.get())
+    boost::scoped_ptr<IDirectory> pDirectory(CDirectoryFactory::Create(realPath));
+    if (pDirectory)
       if(pDirectory->Create(realPath.c_str()))
         return true;
   }
@@ -256,8 +259,8 @@ bool CDirectory::Exists(const CStdString& strPath)
   try
   {
     CStdString realPath = URIUtils::SubstitutePath(strPath);
-    unique_ptr<IDirectory> pDirectory(CDirectoryFactory::Create(realPath));
-    if (pDirectory.get())
+    boost::scoped_ptr<IDirectory> pDirectory(CDirectoryFactory::Create(realPath));
+    if (pDirectory)
       return pDirectory->Exists(realPath.c_str());
   }
   XBMCCOMMONS_HANDLE_UNCHECKED
@@ -274,8 +277,8 @@ bool CDirectory::Remove(const CStdString& strPath)
   try
   {
     CStdString realPath = URIUtils::SubstitutePath(strPath);
-    unique_ptr<IDirectory> pDirectory(CDirectoryFactory::Create(realPath));
-    if (pDirectory.get())
+    boost::scoped_ptr<IDirectory> pDirectory(CDirectoryFactory::Create(realPath));
+    if (pDirectory)
       if(pDirectory->Remove(realPath.c_str()))
         return true;
   }
@@ -295,8 +298,8 @@ void CDirectory::FilterFileDirectories(CFileItemList &items, const CStdString &m
     CFileItemPtr pItem=items[i];
     if ((!pItem->m_bIsFolder) && (!pItem->IsInternetStream()))
     {
-      unique_ptr<IFileDirectory> pDirectory(CFileDirectoryFactory::Create(pItem->GetPath(), pItem.get(), mask));
-      if (pDirectory.get())
+      boost::scoped_ptr<IFileDirectory> pDirectory(CFileDirectoryFactory::Create(pItem->GetPath(), pItem.get(), mask));
+      if (pDirectory)
         pItem->m_bIsFolder = true;
       else
         if (pItem->m_bIsFolder)

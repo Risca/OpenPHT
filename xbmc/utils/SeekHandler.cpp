@@ -76,9 +76,9 @@ void CSeekHandler::Configure()
     std::vector<int> backwardSeekSteps;
 
     std::vector<std::string> seekSteps = StringUtils::Split(it->second, ",");
-    for (std::vector<std::string>::iterator it = seekSteps.begin(); it != seekSteps.end(); ++it)
+    for (std::vector<std::string>::iterator step = seekSteps.begin(); step != seekSteps.end(); ++step)
     {
-      int stepSeconds = std::strtol((*it).c_str(), NULL, 10);
+      int stepSeconds = std::strtol(step->c_str(), NULL, 10);
       if (stepSeconds < 0)
         backwardSeekSteps.insert(backwardSeekSteps.begin(), stepSeconds);
       else
@@ -109,7 +109,7 @@ int CSeekHandler::GetSeekStepSize(SeekType type, int step)
   if (seekSteps.empty())
   {
     CLog::Log(LOGERROR, "SeekHandler - %s - No %s %s seek steps configured.", __FUNCTION__,
-              (type == SeekType::SEEK_TYPE_VIDEO ? "video" : "music"), (step > 0 ? "forward" : "backward"));
+              (type == SEEK_TYPE_VIDEO ? "video" : "music"), (step > 0 ? "forward" : "backward"));
     return 0;
   }
 

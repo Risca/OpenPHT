@@ -62,7 +62,7 @@ bool CDVDVideoCodec::IsSettingVisible(const std::string &condition, const std::s
 
 bool CDVDVideoCodec::IsCodecDisabled(const std::map<AVCodecID, std::string> &map, AVCodecID id)
 {
-  auto codec = map.find(id);
+  const std::map<AVCodecID, std::string>::const_iterator codec = map.find(id);
   if (codec != map.end())
   {
     return (!g_guiSettings.GetBool(codec->second.c_str()) ||

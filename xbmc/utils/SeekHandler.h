@@ -39,7 +39,7 @@ class CSeekHandler : public IActionListener
 public:
   static CSeekHandler& GetInstance();
   
-  virtual bool OnAction(const CAction &action) override;
+  virtual bool OnAction(const CAction &action);
 
   void Seek(bool forward, float amount, float duration = 0, bool analogSeek = false, SeekType type = SEEK_TYPE_VIDEO);
   void SeekSeconds(int seconds);

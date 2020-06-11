@@ -34,6 +34,8 @@
 #include "URL.h"
 /* END PLEX */
 
+#include <boost/scoped_ptr.hpp>
+
 //using namespace std;
 using namespace MUSIC_INFO;
 using namespace XFILE;
@@ -462,13 +464,13 @@ bool CPlayList::Expand(int position)
 {
   CFileItemPtr item = m_vecItems[position];
 #ifndef __PLEX__
-  std::unique_ptr<CPlayList> playlist(CPlayListFactory::Create(*item.get()));
+  boost::scoped_ptr<CPlayList> playlist(CPlayListFactory::Create(*item.get()));
 #else
-  std::unique_ptr<CPlayList> playlist;
+  boost::scoped_ptr<CPlayList> playlist;
 
   try
   {
-    playlist = std::unique_ptr<CPlayList>(CPlayListFactory::Create(*item.get()));
+    playlist.reset(CPlayListFactory::Create(*item.get()));
   }
   catch (CRedirectException* ex)
   {

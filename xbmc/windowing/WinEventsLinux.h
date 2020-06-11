@@ -27,6 +27,8 @@
 #include "input/linux/LinuxInputDevices.h"
 #include "guilib/TextureManager.h"
 
+#include <boost/scoped_ptr.hpp>
+
 class CWinEventsLinux : public IWinEvents
 {
 public:
@@ -45,7 +47,7 @@ public:
 private:
   static bool m_initialized;
   static CLinuxInputDevices m_devices;
-  std::unique_ptr<CLinuxInputDevicesCheckHotplugged> m_checkHotplug;
+  boost::scoped_ptr<CLinuxInputDevicesCheckHotplugged> m_checkHotplug;
 #ifdef TARGET_RASPBERRY_PI
   bool LoadXML(const std::string strFileName);
   int64_t m_last_mouse_move_time;

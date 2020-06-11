@@ -51,12 +51,15 @@ public:
 private:
   CPictureScalingAlgorithm();
 
-  typedef struct ScalingAlgorithm
+  struct ScalingAlgorithm
   {
     std::string name;
     int swscale;
-  } ScalingAlgorithm;
+    ScalingAlgorithm() : swscale(0) {}
+    ScalingAlgorithm(const std::string n, int s) : name(n), swscale(s) {}
+  };
 
   typedef std::map<CPictureScalingAlgorithm::Algorithm, CPictureScalingAlgorithm::ScalingAlgorithm> AlgorithmMap;
   static AlgorithmMap m_algorithms;
+  static AlgorithmMap CreateAlgorithmMapping();
 };

@@ -28,6 +28,7 @@
 #include "Util.h"
 #include "utils/StringUtils.h"
 
+#include <boost/scoped_array.hpp>
 
 CDVDOverlayCodecSSA::CDVDOverlayCodecSSA() : CDVDOverlayCodec("SSA Subtitle Decoder")
 {
@@ -90,7 +91,7 @@ int CDVDOverlayCodecSSA::Decode(DemuxPacket *pPacket)
     {
       line = lines[i];
       line.Trim();
-      std::unique_ptr<char[]> layer(new char[line.length() + 1]);
+      boost::scoped_array<char> layer(new char[line.length() + 1]);
 
       if(sscanf(line.c_str(), "%*[^:]:%[^,],%d:%d:%d%*c%d,%d:%d:%d%*c%d"
                             , layer.get(), &sh, &sm, &ss, &sc, &eh,&em, &es, &ec) != 9)

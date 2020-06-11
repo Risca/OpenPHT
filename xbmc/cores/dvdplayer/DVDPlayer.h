@@ -155,20 +155,29 @@ public:
 
 typedef struct SelectionStream
 {
-  StreamType   type = STREAM_NONE;
-  int          type_index = 0;
+  StreamType   type;
+  int          type_index;
   std::string  filename;
   std::string  filename2;  // for vobsub subtitles, 2 files are necessary (idx/sub)
   std::string  language;
   std::string  name;
-  CDemuxStream::EFlags flags = CDemuxStream::FLAG_NONE;
-  int          source = 0;
-  int          id = 0;
+  CDemuxStream::EFlags flags;
+  int          source;
+  int          id;
   std::string  codec;
-  int          channels = 0;
+  int          channels;
   /* PLEX */
-  int          plexID = -1;
+  int          plexID;
   /* END PLEX */
+  SelectionStream() :
+    type(STREAM_NONE),
+    type_index(0),
+    flags(CDemuxStream::FLAG_NONE),
+    source(0),
+    id(0),
+    channels(0),
+    plexID(-1)
+  {}
 } SelectionStream;
 
 typedef std::vector<SelectionStream> SelectionStreams;

@@ -31,7 +31,7 @@ public:
 
     TiXmlElement el("Response");
     el.SetAttribute("code", code);
-    el.SetAttribute("status", std::string(status));
+    el.SetAttribute("status", status.c_str());
     xmlOutput.InsertEndChild(el);
 
     body = PlexUtils::GetXMLString(xmlOutput);

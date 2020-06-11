@@ -1347,7 +1347,7 @@ void CActiveAE::FlushEngine()
 
 void CActiveAE::ClearDiscardedBuffers()
 {
-  auto it = m_discardBufferPools.begin();
+  std::list<CActiveAEBufferPool*>::iterator it = m_discardBufferPools.begin();
   while (it != m_discardBufferPools.end())
   {
     CActiveAEBufferPoolResample *rbuf = dynamic_cast<CActiveAEBufferPoolResample*>(*it);

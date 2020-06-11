@@ -27,6 +27,8 @@
 #include "dialogs/GUIDialogContextMenu.h"
 #include "playlists/SmartPlayList.h"
 
+#include <boost/scoped_ptr.hpp>
+
 /* PLEX */
 #include "BackgroundInfoLoader.h"
 #include "FileItem.h"
@@ -180,7 +182,7 @@ protected:
   CFileItemListPtr m_vecItems;
   CFileItemList* m_unfilteredItems;        ///< \brief items prior to filtering using FilterItems()
   CDirectoryHistory m_history;
-  std::unique_ptr<CGUIViewState> m_guiState;
+  boost::scoped_ptr<CGUIViewState> m_guiState;
 
   // save control state on window exit
   int m_iLastControl;

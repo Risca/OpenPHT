@@ -36,6 +36,8 @@
 #include "Album.h"
 #include "MusicThumbLoader.h"
 
+#include <boost/scoped_ptr.hpp>
+
 using namespace std;
 using namespace XFILE;
 using namespace MUSIC_INFO;
@@ -110,7 +112,7 @@ bool CMusicInfoLoader::LoadAdditionalTagInfo(CFileItem* pItem)
   CLog::Log(LOGDEBUG, "Loading additional tag info for file %s", path.c_str());
 
   // we load up the actual tag for this file
-  unique_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(path));
+  boost::scoped_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(path));
   if (NULL != pLoader.get())
   {
     CMusicInfoTag tag;
@@ -178,7 +180,7 @@ bool CMusicInfoLoader::LoadItem(CFileItem* pItem)
       { // Nothing found, load tag from file,
         // always try to load cddb info
         // get correct tag parser
-        unique_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(pItem->GetPath()));
+        boost::scoped_ptr<IMusicInfoTagLoader> pLoader(CMusicInfoTagLoaderFactory::CreateLoader(pItem->GetPath()));
         if (NULL != pLoader.get())
           // get tag
           pLoader->Load(pItem->GetPath(), *pItem->GetMusicInfoTag());

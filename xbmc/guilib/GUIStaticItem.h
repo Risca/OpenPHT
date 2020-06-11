@@ -81,7 +81,7 @@ public:
   const CGUIAction &GetClickActions() const { return m_clickActions; };
 
   /* PLEX */
-  CGUIStaticItem() { m_visCondition = 0; m_visState = true; }
+  CGUIStaticItem() : m_visState(true) {}
 	void SetClickActions(const CGUIAction& actions) { m_clickActions = actions; }
   CGUIStaticItem(const CFileItem& item) : CFileItem(item) {}
   /* END PLEX */

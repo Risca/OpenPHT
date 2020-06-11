@@ -610,9 +610,7 @@ bool CExternalPlayer::Initialize(TiXmlElement* pConfig)
   }
   else
   {
-    CStdString xml;
-    xml<<*pConfig;
-    CLog::Log(LOGERROR, "ExternalPlayer Error: filename element missing from: %s", xml.c_str());
+    CLog::Log(LOGERROR, "ExternalPlayer Error: filename element missing from: %s", pConfig->Value());
     return false;
   }
 

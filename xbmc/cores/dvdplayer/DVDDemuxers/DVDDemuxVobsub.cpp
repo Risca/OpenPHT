@@ -27,6 +27,7 @@
 #include "DVDClock.h"
 #include "DVDSubtitles/DVDSubtitleStream.h"
 
+#include <boost/scoped_ptr.hpp>
 #include <string.h>
 
 CDVDDemuxVobsub::CDVDDemuxVobsub()
@@ -47,7 +48,7 @@ bool CDVDDemuxVobsub::Open(const std::string& filename, int source, const std::s
   m_Filename = filename;
   m_source = source;
 
-  std::unique_ptr<CDVDSubtitleStream> pStream(new CDVDSubtitleStream());
+  boost::scoped_ptr<CDVDSubtitleStream> pStream(new CDVDSubtitleStream());
   if(!pStream->Open(filename))
     return false;
 
@@ -193,7 +194,7 @@ bool CDVDDemuxVobsub::ParseDelay(SState& state, char* line)
 
 bool CDVDDemuxVobsub::ParseId(SState& state, char* line)
 {
-  std::unique_ptr<CStream> stream(new CStream(this));
+  CStream *stream = new CStream(this);
 
   while(*line == ' ') line++;
   strncpy(stream->language, line, 2);
@@ -215,7 +216,7 @@ bool CDVDDemuxVobsub::ParseId(SState& state, char* line)
   stream->source = m_source;
 
   state.id = stream->iId;
-  m_Streams.push_back(stream.release());
+  m_Streams.push_back(stream);
   return true;
 }
 

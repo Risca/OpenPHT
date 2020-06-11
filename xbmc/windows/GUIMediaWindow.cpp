@@ -85,6 +85,8 @@
 #include "GUI/GUIDialogPlexError.h"
 /* END PLEX */
 
+#include <boost/scoped_ptr.hpp>
+
 #define CONTROL_BTNVIEWASICONS       2
 #define CONTROL_BTNSORTBY            3
 #define CONTROL_BTNSORTASC           4
@@ -627,7 +629,7 @@ void CGUIMediaWindow::ClearFileItems()
 void CGUIMediaWindow::SortItems(CFileItemList &items)
 {
 #ifndef __PLEX__
-  unique_ptr<CGUIViewState> guiState(CGUIViewState::GetViewState(GetID(), items));
+  boost::scoped_ptr<CGUIViewState> guiState(CGUIViewState::GetViewState(GetID(), items));
 
   if (guiState.get())
   {
@@ -690,7 +692,7 @@ void CGUIMediaWindow::FormatItemLabels(CFileItemList &items, const LABEL_MASKS &
 // \brief Prepares and adds the fileitems list/thumb panel
 void CGUIMediaWindow::FormatAndSort(CFileItemList &items)
 {
-  unique_ptr<CGUIViewState> viewState(CGUIViewState::GetViewState(GetID(), items));
+  boost::scoped_ptr<CGUIViewState> viewState(CGUIViewState::GetViewState(GetID(), items));
 
   if (viewState.get())
   {
@@ -1208,7 +1210,7 @@ bool CGUIMediaWindow::OnClick(int iItem)
         if (plugin && plugin->Provides(CPluginSource::AUDIO))
         {
           CFileItemList items;
-          unique_ptr<CGUIViewState> state(CGUIViewState::GetViewState(GetID(), items));
+          boost::scoped_ptr<CGUIViewState> state(CGUIViewState::GetViewState(GetID(), items));
           autoplay = state.get() && state->AutoPlayNextItem();
         }
       }

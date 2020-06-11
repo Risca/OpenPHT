@@ -168,6 +168,8 @@
 #include "plex/GUI/GUIDialogPlexUserSelect.h"
 /* END PLEX */
 
+#include <boost/foreach.hpp>
+
 using namespace std;
 using namespace PVR;
 using namespace PERIPHERALS;
@@ -645,7 +647,7 @@ void CGUIWindowManager::RegisterDialog(CGUIWindow* dialog)
 {
   CSingleLock lock(g_graphicsContext);
   // only add the window if it does not exists
-  for (const auto& activeDialog : m_activeDialogs)
+  BOOST_FOREACH(const CGUIWindow* const& activeDialog, m_activeDialogs)
   {
     if (activeDialog->GetID() == dialog->GetID())
       return;
@@ -915,8 +917,7 @@ void CGUIWindowManager::CloseDialogs(bool forceClose) const
   if (m_activeDialogs.empty())
     return;
 
-  auto activeDialogs = m_activeDialogs;
-  for (const auto& dialog : activeDialogs)
+  BOOST_FOREACH(CGUIWindow* const& dialog, m_activeDialogs)
   {
     dialog->Close(forceClose);
   }
@@ -928,8 +929,7 @@ void CGUIWindowManager::CloseInternalModalDialogs(bool forceClose) const
   if (m_activeDialogs.empty())
     return;
 
-  auto activeDialogs = m_activeDialogs;
-  for (const auto& dialog : activeDialogs)
+  BOOST_FOREACH(CGUIWindow* const& dialog, m_activeDialogs)
   {
     if (dialog->IsModalDialog() && !IsAddonWindow(dialog->GetID()) && !IsPythonWindow(dialog->GetID()))
       dialog->Close(forceClose);

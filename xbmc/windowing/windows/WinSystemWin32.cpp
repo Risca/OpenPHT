@@ -357,7 +357,7 @@ const MONITOR_DETAILS* CWinSystemWin32::GetMonitor(int screen) const
   else
   {
     CLog::Log(LOGERROR, "%s : no monitor found for screen %i", __FUNCTION__, screen);
-    return nullptr;
+    return NULL;
   }
 }
 

@@ -43,6 +43,8 @@ protected:
   //! \param data Vector with data to apply window to.
   static void hann(std::vector<kiss_fft_scalar>& data);
 
+  float filter(kiss_fft_cpx& data) const;
+
   size_t m_size;       //!< Size for a single channel.
   bool m_windowed;     //!< Whether or not a Hann window is applied.
   kiss_fftr_cfg m_cfg; //!< FFT plan
