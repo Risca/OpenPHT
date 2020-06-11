@@ -46,6 +46,7 @@ namespace VDPAU { class CVdpauRenderPicture; }
 class COpenMax;
 class COpenMaxVideo;
 struct OpenMaxVideoBufferHolder;
+class CISMDBuffer;
 class CMMALVideoBuffer;
 
 
@@ -78,6 +79,10 @@ struct DVDVideoPicture
 
     struct {
       struct __CVBuffer *cvBufferRef;
+    };
+
+    struct {
+      CISMDBuffer *ismdbuf;
     };
 
     struct {

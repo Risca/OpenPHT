@@ -34,6 +34,7 @@ else (DBUS_INCLUDE_DIR AND DBUS_ARCH_INCLUDE_DIR AND DBUS_LIBRARIES)
     /usr/include
     /usr/include/dbus-1.0
     /usr/local/include
+    /usr/local/include/dbus-1.0
   )
 
   FIND_PATH(DBUS_ARCH_INCLUDE_DIR dbus/dbus-arch-deps.h
@@ -44,6 +45,7 @@ else (DBUS_INCLUDE_DIR AND DBUS_ARCH_INCLUDE_DIR AND DBUS_LIBRARIES)
     /usr/lib64/dbus-1.0/include
     /usr/lib/include
     /usr/lib/dbus-1.0/include
+    /usr/local/lib/dbus-1.0/include
   )
 
   FIND_LIBRARY(DBUS_LIBRARIES NAMES dbus-1 dbus

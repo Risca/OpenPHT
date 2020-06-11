@@ -39,7 +39,9 @@
 #include "guilib/GUIFontManager.h"
 #include "cores/DataCacheCore.h"
 
-#if defined(HAS_GL)
+#if defined(HAS_INTEL_SMD)
+  #include "IntelSMDRenderer.h"
+#elif defined(HAS_GL)
   #include "LinuxRendererGL.h"
 #elif defined(HAS_MMAL)
   #include "MMALRenderer.h"
@@ -447,7 +449,9 @@ unsigned int CXBMCRenderManager::PreInit()
   m_bIsStarted = false;
   if (!m_pRenderer)
   {
-#if defined(HAS_GL)
+#if defined(HAS_INTEL_SMD)
+    m_pRenderer = new CIntelSMDRenderer();
+#elif defined(HAS_GL)
     m_pRenderer = new CLinuxRendererGL();
 #elif defined(HAS_MMAL)
     m_pRenderer = new CMMALRenderer();

@@ -435,7 +435,7 @@ void CGUISettings::Initialize()
 #endif
 
   map<int,int> vsync;
-#if defined(_LINUX) && !defined(TARGET_DARWIN)
+#if defined(_LINUX) && !defined(TARGET_DARWIN) && !defined(TARGET_BOXEE)
   vsync.insert(make_pair(13101,VSYNC_DRIVER));
 #endif
   vsync.insert(make_pair(13106,VSYNC_DISABLED));
@@ -1399,7 +1399,7 @@ void CGUISettings::LoadXML(TiXmlElement *pRootElement, bool hideSettings /* = fa
   CLog::Log(LOGINFO, "DTS pass through is %s", GetBool("audiooutput.dtspassthrough") ? "enabled" : "disabled");
   CLog::Log(LOGINFO, "AAC pass through is %s", GetBool("audiooutput.passthroughaac") ? "enabled" : "disabled");
 
-#if defined(TARGET_DARWIN)
+#if defined(TARGET_DARWIN) || defined(TARGET_BOXEE)
   // trap any previous vsync by driver setting, does not exist on OSX
   if (GetInt("videoscreen.vsync") == VSYNC_DRIVER)
   {

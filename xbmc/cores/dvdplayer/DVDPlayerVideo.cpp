@@ -937,6 +937,7 @@ static std::string GetRenderFormatName(ERenderFormat format)
     case RENDER_FMT_OMXEGL:    return "OMXEGL";
     case RENDER_FMT_CVBREF:    return "BGRA";
     case RENDER_FMT_BYPASS:    return "BYPASS";
+    case RENDER_FMT_ISMD:      return "ISMD";
     case RENDER_FMT_MMAL:      return "MMAL";
     case RENDER_FMT_NONE:      return "NONE";
   }
@@ -1192,6 +1193,10 @@ int CDVDPlayerVideo::OutputPicture(const DVDVideoPicture* src, double pts)
     return EOS_DROPPED;
   }
 
+#ifdef HAS_INTEL_SMD
+  pts = iPlayingClock;
+  pPicture->pts += m_iVideoDelay - DVD_SEC_TO_TIME(g_renderManager.GetDisplayLatency());
+#endif
   ProcessOverlays(pPicture, pts_org);
 
   int index = g_renderManager.AddVideoPicture(*pPicture);

@@ -23,6 +23,8 @@
 #if defined(TARGET_WINDOWS)
   #include "Sinks/AESinkWASAPI.h"
   #include "Sinks/AESinkDirectSound.h"
+#elif defined(TARGET_BOXEE)
+  #include "Sinks/AESinkIntelSMD.h"
 #elif defined(TARGET_ANDROID)
   #include "Sinks/AESinkAUDIOTRACK.h"
 #elif defined(TARGET_RASPBERRY_PI)
@@ -65,6 +67,8 @@ void CAESinkFactory::ParseDevice(std::string &device, std::string &driver)
 #if defined(TARGET_WINDOWS)
         driver == "WASAPI"      ||
         driver == "DIRECTSOUND" ||
+#elif defined(TARGET_BOXEE)
+        driver == "INTELSMD" ||		
 #elif defined(TARGET_ANDROID)
         driver == "AUDIOTRACK"  ||
 #elif defined(TARGET_RASPBERRY_PI)
@@ -109,6 +113,8 @@ IAESink *CAESinkFactory::TrySink(std::string &driver, std::string &device, AEAud
       sink = new CAESinkWASAPI();
     if (driver == "DIRECTSOUND")
       sink = new CAESinkDirectSound();
+#elif defined(TARGET_BOXEE)
+    sink = new CAESinkIntelSMD();
 #elif defined(TARGET_ANDROID)
     sink = new CAESinkAUDIOTRACK();
 #elif defined(TARGET_RASPBERRY_PI)
@@ -197,6 +203,14 @@ void CAESinkFactory::EnumerateEx(AESinkInfoList &list, bool force)
   if(!info.m_deviceInfoList.empty())
     list.push_back(info);
 
+#elif defined(TARGET_BOXEE)
+
+  info.m_deviceInfoList.clear();
+  info.m_sinkName = "INTELSMD";
+  CAESinkIntelSMD::EnumerateDevicesEx(info.m_deviceInfoList, force);
+  if(!info.m_deviceInfoList.empty())
+    list.push_back(info);
+	
 #elif defined(TARGET_ANDROID)
 
   info.m_deviceInfoList.clear();

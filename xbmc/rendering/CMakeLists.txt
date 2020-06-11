@@ -1,6 +1,6 @@
 find_all_sources(. rendering_SRCS)
 if(TARGET_POSIX)
-  if(TARGET_RPI OR TARGET_AML)
+  if(TARGET_RPI OR TARGET_AML OR TARGET_BOXEEBOX)
     find_all_sources(gles system_SRCS)
   else()
     find_all_sources(gl system_SRCS)

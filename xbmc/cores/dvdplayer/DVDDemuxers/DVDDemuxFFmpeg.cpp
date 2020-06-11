@@ -505,6 +505,10 @@ bool CDVDDemuxFFmpeg::Open(CDVDInputStream* pInput, bool streaminfo, bool filein
   // if format can be nonblocking, let's use that
   m_pFormatContext->flags |= AVFMT_FLAG_NONBLOCK;
 
+#ifdef HAS_INTEL_SMD
+  m_pFormatContext->flags |= AVFMT_FLAG_GENPTS;
+#endif
+
   // print some extra information
   av_dump_format(m_pFormatContext, 0, strFile.c_str(), 0);
 
@@ -819,13 +823,14 @@ DemuxPacket* CDVDDemuxFFmpeg::Read()
         // we need to get duration slightly different for matroska embedded text subtitels
         if(m_bMatroska && stream->codec && stream->codec->codec_id == AV_CODEC_ID_TEXT && m_pkt.pkt.convergence_duration != 0)
           m_pkt.pkt.duration = m_pkt.pkt.convergence_duration;
-
+#ifndef HAS_INTEL_SMD
         if(m_bAVI && stream->codec && stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
         {
           // AVI's always have borked pts, specially if m_pFormatContext->flags includes
           // AVFMT_FLAG_GENPTS so always use dts
           m_pkt.pkt.pts = AV_NOPTS_VALUE;
         }
+#endif
 
         // copy contents into our own packet
         pPacket->iSize = m_pkt.pkt.size;
