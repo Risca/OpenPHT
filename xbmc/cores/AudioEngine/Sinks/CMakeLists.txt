@@ -23,6 +23,10 @@ if(TARGET_RPI)
   add_sources(AESinkPi.cpp AESinkPi.h)
 endif(TARGET_RPI)
 
+if(TARGET_BOXEEBOX)
+  add_sources(AESinkIntelSMD.cpp AESinkIntelSMD.cpp)
+endif(TARGET_BOXEEBOX)
+
 if(TARGET_COMMON_LINUX OR TARGET_FREEBSD)
   add_sources(AESinkOSS.cpp AESinkOSS.h)
 endif(TARGET_COMMON_LINUX OR TARGET_FREEBSD)

@@ -2,7 +2,7 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 find_all_sources(. squish_SRCS)
   
-if (NOT TARGET_RPI)
+if (NOT TARGET_RPI AND NOT TARGET_BOXEEBOX)
   if(CMAKE_SSE_CFLAGS)
     add_definitions(-DSQUISH_USE_SSE=2)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_SSE_CFLAGS}")

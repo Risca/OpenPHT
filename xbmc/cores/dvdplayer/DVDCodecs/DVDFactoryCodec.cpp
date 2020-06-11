@@ -45,6 +45,10 @@
 #include "utils/AMLUtils.h"
 #include "Video/DVDVideoCodecAmlogic.h"
 #endif
+#if defined(HAS_INTEL_SMD)
+#include "Video/DVDVideoCodecSMD.h"
+//#include "Audio/DVDAudioCodecSMD.h"
+#endif
 #include "Audio/DVDAudioCodecFFmpeg.h"
 #include "Audio/DVDAudioCodecPassthrough.h"
 #include "Overlay/DVDOverlayCodecSSA.h"
@@ -174,6 +178,9 @@ CDVDVideoCodec* CDVDFactoryCodec::CreateVideoCodec(CDVDStreamInfo &hint, const C
 #elif defined(TARGET_POSIX) && !defined(TARGET_DARWIN)
   hwSupport += "VAAPI:no ";
 #endif
+#if defined(HAS_INTEL_SMD)
+  hwSupport += "IntelSMD:yes ";
+#endif
 #if defined(HAS_MMAL)
   hwSupport += "MMAL:yes ";
 #else
@@ -262,6 +269,13 @@ CDVDVideoCodec* CDVDFactoryCodec::CreateVideoCodec(CDVDStreamInfo &hint, const C
     }
 #endif
 
+#if defined(HAS_INTEL_SMD)
+     if (!hint.software)
+     {
+       if( (pCodec = OpenCodec(new CDVDVideoCodecSMD(), hint, options)) ) return pCodec;
+     }
+#endif
+
   // try to decide if we want to try halfres decoding
 #if !defined(TARGET_POSIX) && !defined(TARGET_WINDOWS)
   float pixelrate = (float)hint.width*hint.height*hint.fpsrate/hint.fpsscale;
@@ -283,6 +297,14 @@ CDVDAudioCodec* CDVDFactoryCodec::CreateAudioCodec( CDVDStreamInfo &hint)
 {
   CDVDAudioCodec* pCodec = NULL;
   CDVDCodecOptions options;
+
+//#if defined(HAS_INTEL_SMD)
+//  if (!hint.software)
+//  {
+//    pCodec = OpenCodec( new CDVDAudioCodecSMD(), hint, options);
+//    if( pCodec ) return pCodec;
+//  }
+//#endif
 
   // try passthrough first
   pCodec = OpenCodec( new CDVDAudioCodecPassthrough(), hint, options );

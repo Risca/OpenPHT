@@ -22,6 +22,11 @@ if(NOT TARGET_AML)
   list(REMOVE_ITEM video_SRCS ./DVDVideoCodecAmlogic.cpp)
 endif()
 
+if(NOT TARGET_BOXEEBOX)
+  list(REMOVE_ITEM video_SRCS ./IntelSMDVideo.cpp)
+  list(REMOVE_ITEM video_SRCS ./DVDVideoCodecSMD.cpp)
+endif()
+
 if (NOT TARGET_LINUX AND NOT TARGET_FREEBSD)
   list(REMOVE_ITEM video_SRCS ./VDPAU.cpp)
   list(REMOVE_ITEM video_SRCS ./VAAPI.cpp)
