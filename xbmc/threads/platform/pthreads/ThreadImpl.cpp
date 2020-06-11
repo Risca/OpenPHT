@@ -37,6 +37,7 @@
 #endif
 
 #include <signal.h>
+#include <sys/prctl.h>
 
 void CThread::SpawnThread(unsigned stacksize)
 {
@@ -78,7 +79,11 @@ void CThread::SetThreadInfo()
   pthread_setname_np(m_ThreadName.c_str());
 #endif
 #else
+#if (2 < __GLIBC__) || ((2 == __GLIBC__) && (12 <= __GLIBC_MINOR__))
   pthread_setname_np(m_ThreadId, m_ThreadName.c_str());
+#else
+  prctl(PR_SET_NAME, m_ThreadName.c_str());
+#endif // GLIBC >= 2.12
 #endif
 #elif defined(HAVE_PTHREAD_SET_NAME_NP)
   pthread_set_name_np(m_ThreadId, m_ThreadName.c_str());

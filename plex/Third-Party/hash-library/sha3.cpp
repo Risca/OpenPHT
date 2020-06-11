@@ -61,7 +61,11 @@ namespace
   /// convert litte vs big endian
   inline uint64_t swap(uint64_t x)
   {
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__clang__) || \
+  (defined(__GNUC__) && (__GNUC__ > 4 || \
+    (__GNUC__ == 4 && (__GNUC_MINOR__ > 3 || \
+                       (__GNUC_MINOR__ == 3 && \
+                        __GNUC_PATCHLEVEL__ > 0)))))
     return __builtin_bswap64(x);
 #endif
 #ifdef MSC_VER
