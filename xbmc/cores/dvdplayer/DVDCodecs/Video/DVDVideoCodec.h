@@ -27,8 +27,6 @@
 #include <map>
 #include "cores/VideoRenderers/RenderFormats.h"
 
-
-
 extern "C" {
 #include "libavcodec/avcodec.h"
 }
